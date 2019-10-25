@@ -7,7 +7,7 @@ plugins {
 	id 'application'
 }
 
-mainClassName = 'com.worldpay.aws.awsuploaddemo.UploadExample'
+mainClassName = 'com.worldpay.aws.awsuploaddemo.UploadFile'
 group = 'com.worldpay.aws'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
