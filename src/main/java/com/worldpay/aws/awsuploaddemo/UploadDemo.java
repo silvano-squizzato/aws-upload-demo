@@ -2,28 +2,39 @@ package com.worldpay.aws.awsuploaddemo;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicSessionCredentials;
+import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.Credentials;
+import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
+import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class UploadFile {
+public class UploadDemo {
 
     public static void main(String[] args) throws IOException {
         Regions clientRegion = Regions.EU_WEST_1;
         String bucketName = "cr-demo-upload";
-        String fileObjKeyName = "cr-demo-file-1.txt";
-        String fileName = UploadFile.class.getClassLoader().getResource("cr-demo-file-1.txt").getPath();
+        String fileObjKeyName = "cr-demo-file-8.txt";
+        String fileName = UploadDemo.class.getClassLoader().getResource("cr-demo-file-1.txt").getPath();
 
         try {
-            //This code expects that you have AWS credentials set up per:
-            // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+            // Provide temporary security credentials so that the Amazon S3 client
+            // can send authenticated requests to Amazon S3.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                    .withCredentials(new STSAssumeRoleSessionCredentialsProvider("arn:aws:iam::388570974987:role/wp_power_role", "demo-session"))
                     .withRegion(clientRegion)
                     .build();
 
@@ -44,18 +55,4 @@ public class UploadFile {
             e.printStackTrace();
         }
     }
-
-    private File getFileFromResources(String fileName) {
-
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file is not found!");
-        } else {
-            return new File(resource.getFile());
-        }
-
-    }
 }
-
