@@ -12,14 +12,11 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.File;
 import java.io.IOException;
 
-public class UploadDemo {
+public class BucketDemo {
 
     public static void main(String[] args) throws IOException {
         Regions clientRegion = Regions.EU_WEST_1;
-        String bucketName = "cr-demo-upload";
-        String fileObjKeyName = "cr-demo-file-8.txt";
-        String fileName = UploadDemo.class.getClassLoader().getResource("cr-demo-file-1.txt").getPath();
-
+        String bucketName = "test-bucket-1";
         try {
             // Provide temporary security credentials so that the Amazon S3 client
             // can send authenticated requests to Amazon S3.
@@ -28,13 +25,12 @@ public class UploadDemo {
                     .withRegion(clientRegion)
                     .build();
 
-            // Upload a file as a new object with ContentType and title specified.
-            PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, new File(fileName));
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("plain/text");
-            metadata.addUserMetadata("x-amz-meta-title", "someTitle");
-            request.setMetadata(metadata);
-            s3Client.putObject(request);
+            System.out.println("Creating a bucket " + bucketName);
+
+            s3Client.createBucket("test-bucket-1");
+
+            System.out.println("Created bucket " + bucketName);
+
         } catch (AmazonServiceException e) {
             // The call was transmitted successfully, but Amazon S3 couldn't process
             // it, so it returned an error response.
