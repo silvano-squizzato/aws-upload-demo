@@ -15,17 +15,21 @@ import java.io.IOException;
 public class UploadDemo {
 
     public static void main(String[] args) throws IOException {
-        Regions clientRegion = Regions.EU_WEST_1;
         String bucketName = "cr-demo-upload";
-        String fileObjKeyName = "cr-demo-file-8.txt";
+        String fileObjKeyName = "cr-demo-file-9.txt";
         String fileName = UploadDemo.class.getClassLoader().getResource("cr-demo-file-1.txt").getPath();
 
         try {
+            STSAssumeRoleSessionCredentialsProvider credentials = new STSAssumeRoleSessionCredentialsProvider.Builder(
+                    "arn:aws:iam::388570974987:role/wp_power_role",
+                    "test")
+                    .build();
+
             // Provide temporary security credentials so that the Amazon S3 client
             // can send authenticated requests to Amazon S3.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withCredentials(new STSAssumeRoleSessionCredentialsProvider("arn:aws:iam::388570974987:role/wp_power_role", "demo-session"))
-                    .withRegion(clientRegion)
+                    .withRegion(Regions.EU_WEST_1)
+                    .withCredentials(credentials)
                     .build();
 
             // Upload a file as a new object with ContentType and title specified.
